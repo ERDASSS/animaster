@@ -91,10 +91,37 @@ function animaster() {
                 arg: translation});
             return this;
         },
+        addScale(duration, ratio) {
+            this._steps.push({name: "scale",
+                duration: duration,
+                arg: ratio});
+            return this;
+        },
+        addFadeIn(duration, ratio) {
+            this._steps.push({name: "fadeIn",
+                duration: duration});
+            return this;
+        },
+        addFadeOut(duration, ratio) {
+            this._steps.push({name: "fadeOut",
+                duration: duration});
+            return this;
+        },
         play(element){
             for (const step of this._steps){
-                if (step.name === "move"){
-                    this.move(element, step.duration, step.arg);
+                switch (step.name) {
+                    case "move":
+                        this.move(element, step.duration, step.arg);
+                        break;
+                    case "scale":
+                        this.scale(element, step.duration, step.arg);
+                        break;
+                    case "fadeIn":
+                        this.fadeIn(element, step.duration);
+                        break;
+                    case "fadeOut":
+                        this.fadeOut(element, step.duration);
+                        break;
                 }
             }
             this._steps = [];
@@ -106,7 +133,7 @@ function addListeners() {
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeInBlock');
-            animaster().fadeIn(block, 5000);
+            animaster().addFadeIn(5000).play(block);
         });
 
     document.getElementById('showAndHide')
@@ -118,7 +145,7 @@ function addListeners() {
     document.getElementById('fadeOutPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeOutBlock');
-            animaster().fadeOut(block, 5000);
+            animaster().addFadeOut(5000).play(block);
         });
 
     document.getElementById('movePlay')
@@ -130,7 +157,7 @@ function addListeners() {
     document.getElementById('scalePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('scaleBlock');
-            animaster().scale(block, 1000, 1.25);
+            animaster().addScale( 1000, 1.25).play(block);
         });
     document.getElementById('moveAndHidePlay')
         .addEventListener('click', function () {
