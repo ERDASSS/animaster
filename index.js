@@ -1,6 +1,20 @@
 addListeners();
 
 function animaster() {
+    function resetFadeIn(element) {
+        element.classList.add('hide');
+        element.classList.remove('show');
+        element.style.transitionDuration = null;
+    }
+    function resetFadeOut(element) {
+        element.classList.remove('hide');
+        element.classList.add('show');
+        element.style.transitionDuration = null;
+    }
+    function resetMoveAndScale(element) {
+        element.style.transform = null;
+        element.style.transitionDuration = null;
+    }
     return {
         /**
          * Блок плавно появляется из прозрачного.
@@ -41,6 +55,12 @@ function animaster() {
         moveAndHide(element, duration, translation) {
             this.move(element, duration * 2 / 5, translation);
             setTimeout(() => this.fadeOut(element, duration * 3 / 5), duration * 2 / 5);
+            return {
+                reset() {
+                    resetMoveAndScale(element);
+                    resetFadeOut(element);
+                }
+            }
         },
         showAndHide(element, duration) {
             this.fadeIn(element, duration/3);
@@ -97,7 +117,8 @@ function addListeners() {
     document.getElementById('moveAndHidePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('moveAndHideBlock');
-            animaster().moveAndHide(block, 1000, {x: 100, y: 20});
+            const resetable = animaster().moveAndHide(block, 1000, {x: 100, y: 20});
+            document.getElementById('moveAndHideReset').addEventListener('click', resetable.reset);
         });
     document.getElementById('heartBeatingPlay')
         .addEventListener('click', function () {
